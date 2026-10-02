@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thème 1 — La musique techno et les festivals</title>
+<style>
+  :root{
+    --bg:#0a0a16;
+    --bg2:#12081f;
+    --pink:#ff2fd0;
+    --cyan:#2ff5ff;
+    --violet:#8b2fff;
+    --text:#f4f0ff;
+    --muted:#b7a9d6;
+    --card:#160f28;
+    --card-border:#3a2560;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(255,47,208,0.18), transparent 40%),
+      radial-gradient(circle at 85% 10%, rgba(47,245,255,0.15), transparent 45%),
+      radial-gradient(circle at 50% 90%, rgba(139,47,255,0.20), transparent 50%),
+      var(--bg);
+    color:var(--text);
+    padding:24px 16px 60px;
+  }
+  .wrap{max-width:820px;margin:0 auto;}
+  header{text-align:center;margin-bottom:32px;}
+  header .tag{
+    display:inline-block;
+    font-size:15px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--cyan);
+    margin-bottom:8px;
+  }
+  h1{
+    font-size:clamp(28px,5vw,42px);
+    margin:0;
+    background:linear-gradient(90deg,var(--pink),var(--cyan));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    text-shadow:0 0 40px rgba(255,47,208,0.3);
+  }
+  .section{
+    background:var(--card);
+    border:1px solid var(--card-border);
+    border-radius:20px;
+    padding:28px 24px;
+    margin-bottom:24px;
+    box-shadow:0 0 30px rgba(139,47,255,0.08);
+  }
+  .section h2{
+    margin-top:0;
+    font-size:20px;
+    color:var(--cyan);
+    letter-spacing:0.5px;
+  }
+  /* ---- Étape 1 : découverte du vocabulaire ---- */
+  .progress{
+    display:flex;
+    gap:6px;
+    justify-content:center;
+    margin-bottom:24px;
+    flex-wrap:wrap;
+  }
+  .dot{
+    width:12px;height:12px;border-radius:50%;
+    background:#2a1f45;
+    border:1px solid var(--card-border);
+    transition:all .3s;
+  }
+  .dot.done{background:var(--pink); box-shadow:0 0 10px var(--pink);}
+  .dot.active{background:var(--cyan); box-shadow:0 0 12px var(--cyan); transform:scale(1.3);}
+  .word-card{
+    text-align:center;
+    padding:40px 20px;
+    border-radius:16px;
+    background:linear-gradient(160deg, rgba(255,47,208,0.08), rgba(47,245,255,0.06));
+    border:1px solid var(--card-border);
+  }
+  .icon{font-size:56px;margin-bottom:12px;display:block;}
+  .en-word{
+    font-size:clamp(24px,4.5vw,34px);
+    font-weight:700;
+    color:var(--text);
+  }
+  .fr-word{
+    font-size:clamp(22px,4vw,30px);
+    font-weight:700;
+    color:var(--pink);
+    margin-top:14px;
+    min-height:40px;
+    opacity:0;
+    transform:translateY(8px);
+    transition:all .4s ease;
+  }
+  .fr-word.shown{opacity:1;transform:translateY(0);}
+  .btn{
+    font-size:17px;
+    font-weight:600;
+    padding:14px 28px;
+    border-radius:50px;
+    border:none;
+    cursor:pointer;
+    color:#0a0a16;
+    background:linear-gradient(90deg,var(--cyan),var(--pink));
+    box-shadow:0 0 20px rgba(255,47,208,0.35);
+    transition:transform .15s;
+  }
+  .btn:active{transform:scale(0.96);}
+  .btn.ghost{
+    background:transparent;
+    color:var(--cyan);
+    border:1px solid var(--cyan);
+    box-shadow:none;
+  }
+  .btn:disabled{opacity:0.35;cursor:not-allowed;box-shadow:none;}
+  .controls{display:flex;gap:14px;justify-content:center;margin-top:26px;flex-wrap:wrap;}
+
+  /* ---- Étape 2 : conversation libre ---- */
+  #stage2{display:none;}
+  .reminder{
+    display:flex;align-items:center;gap:10px;
+    background:rgba(255,47,208,0.12);
+    border:1px solid var(--pink);
+    color:#ffd6f6;
+    padding:12px 18px;
+    border-radius:12px;
+    font-weight:600;
+    font-size:16px;
+    margin-bottom:24px;
+  }
+  .reminder .pulse{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--pink);
+    box-shadow:0 0 10px var(--pink);
+    animation:pulse 1.4s infinite;
+    flex-shrink:0;
+  }
+  @keyframes pulse{
+    0%,100%{opacity:1;}
+    50%{opacity:0.3;}
+  }
+  .word-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+    gap:12px;
+    margin-bottom:28px;
+  }
+  .word-chip{
+    display:flex;align-items:center;gap:10px;
+    background:#1c1435;
+    border:1px solid var(--card-border);
+    border-radius:12px;
+    padding:12px 14px;
+    cursor:pointer;
+    user-select:none;
+    transition:all .2s;
+  }
+  .word-chip:hover{border-color:var(--cyan);}
+  .word-chip .check{
+    width:20px;height:20px;flex-shrink:0;
+    border-radius:6px;
+    border:2px solid var(--muted);
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;
+    transition:all .2s;
+  }
+  .word-chip.checked{background:rgba(47,245,255,0.10); border-color:var(--cyan);}
+  .word-chip.checked .check{background:var(--cyan); border-color:var(--cyan); color:#0a0a16;}
+  .word-chip.checked .fr{text-decoration:line-through;color:var(--muted);}
+  .word-chip .icon2{font-size:20px;}
+  .word-chip .fr{font-weight:600;font-size:15px;}
+
+  .question-box{
+    text-align:center;
+    padding:34px 20px;
+    border-radius:16px;
+    background:linear-gradient(160deg, rgba(139,47,255,0.15), rgba(47,245,255,0.06));
+    border:1px solid var(--card-border);
+    margin-bottom:20px;
+  }
+  #question{
+    font-size:clamp(20px,4vw,26px);
+    font-weight:700;
+    min-height:70px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  #question.spin{animation:spin .5s ease;}
+  @keyframes spin{
+    0%{transform:rotateX(90deg);opacity:0;}
+    60%{transform:rotateX(-10deg);opacity:1;}
+    100%{transform:rotateX(0);opacity:1;}
+  }
+
+  /* ---- Bonus culture ---- */
+  .culture{
+    border:1px dashed var(--cyan);
+    background:rgba(47,245,255,0.06);
+  }
+  .culture summary{
+    cursor:pointer;
+    font-weight:700;
+    color:var(--cyan);
+    font-size:17px;
+    list-style:none;
+  }
+  .culture summary::-webkit-details-marker{display:none;}
+  .culture summary::before{content:"✨ ";}
+  .culture[open] summary{margin-bottom:10px;}
+  .culture p{margin:0;color:var(--text);line-height:1.6;font-size:16px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="tag">Thème 1 · Conversation libre</span>
+    <h1>La musique techno &amp; les festivals</h1>
+  </header>
+
+  <!-- ÉTAPE 1 : vocabulaire -->
+  <div class="section" id="stage1">
+    <h2>Étape 1 — Découverte du vocabulaire</h2>
+    <div class="progress" id="progress"></div>
+    <div class="word-card">
+      <span class="icon" id="wordIcon"></span>
+      <div class="en-word" id="wordEn"></div>
+      <div class="fr-word" id="wordFr"></div>
+    </div>
+    <div class="controls">
+      <button class="btn ghost" id="revealBtn">Révéler le mot</button>
+      <button class="btn" id="nextBtn">Mot suivant →</button>
+    </div>
+  </div>
+
+  <!-- ÉTAPE 2 : conversation -->
+  <div class="section" id="stage2">
+    <h2>Étape 2 — Conversation libre</h2>
+    <div class="reminder"><span class="pulse"></span> Questions seulement — pas de correction pendant la conversation</div>
+
+    <div class="word-grid" id="wordGrid"></div>
+
+    <div class="question-box">
+      <div id="question">Clique pour lancer une question</div>
+      <div class="controls">
+        <button class="btn" id="newQuestionBtn">🔄 Nouvelle question</button>
+      </div>
+    </div>
+
+    <details class="section culture">
+      <summary>Tu le savais ?</summary>
+      <p>Daft Punk, un des duos de musique électronique les plus connus au monde, est français — originaire de Paris.</p>
+    </details>
+  </div>
+</div>
+
+<script>
+const words = [
+  {en:"electronic music", fr:"la musique électronique", icon:"🎵"},
+  {en:"DJ",                fr:"le DJ",                   icon:"🧑‍🎤"},
+  {en:"dance floor",       fr:"la piste de danse",       icon:"💃"},
+  {en:"festival",          fr:"le festival",              icon:"🎪"},
+  {en:"crowd",             fr:"la foule",                 icon:"👥"},
+  {en:"rhythm / beat",     fr:"le rythme",                icon:"🥁"},
+  {en:"speakers",          fr:"les enceintes",           icon:"🔊"},
+  {en:"vibe / atmosphere", fr:"l'ambiance",               icon:"✨"},
+  {en:"night",             fr:"la nuit",                  icon:"🌙"},
+  {en:"headphones",        fr:"le casque",                icon:"🎧"}
+];
+
+const questions = [
+  "Comment tu as découvert la musique électronique ?",
+  "Tu as un DJ préféré ?",
+  "Qu'est-ce qui se passe sur la piste de danse ?",
+  "Comment est l'ambiance dans un festival ?",
+  "Tu préfères une petite foule ou une grande foule ?",
+  "Comment tu décrirais le rythme de la techno ?",
+  "Les enceintes sont importantes pour toi ?",
+  "Comment tu crées l'ambiance chez toi ?",
+  "Tu sors plutôt le jour ou la nuit ?",
+  "Tu utilises un casque pour écouter de la musique ?",
+  "Tu vas à des festivals en Floride ou ailleurs ?",
+  "Qu'est-ce que tu ressens sur la piste de danse ?",
+  "Il y a un festival que tu rêves de visiter ?",
+  "Tu préfères écouter la musique seul ou avec des amis ?"
+];
+
+// ---- Étape 1 ----
+let idx = 0;
+const progressEl = document.getElementById('progress');
+const wordIcon = document.getElementById('wordIcon');
+const wordEn = document.getElementById('wordEn');
+const wordFr = document.getElementById('wordFr');
+const revealBtn = document.getElementById('revealBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+words.forEach(() => {
+  const d = document.createElement('div');
+  d.className = 'dot';
+  progressEl.appendChild(d);
+});
+
+function renderWord(){
+  const w = words[idx];
+  wordIcon.textContent = w.icon;
+  wordEn.textContent = w.en;
+  wordFr.textContent = w.fr;
+  wordFr.classList.remove('shown');
+  revealBtn.disabled = false;
+  [...progressEl.children].forEach((d,i)=>{
+    d.classList.toggle('done', i < idx);
+    d.classList.toggle('active', i === idx);
+  });
+  nextBtn.textContent = idx === words.length - 1 ? "Commencer la conversation →" : "Mot suivant →";
+}
+renderWord();
+
+revealBtn.addEventListener('click', () => {
+  wordFr.classList.add('shown');
+  revealBtn.disabled = true;
+});
+
+nextBtn.addEventListener('click', () => {
+  if (idx < words.length - 1){
+    idx++;
+    renderWord();
+  } else {
+    document.getElementById('stage1').style.display = 'none';
+    document.getElementById('stage2').style.display = 'block';
+  }
+});
+
+// ---- Étape 2 ----
+const wordGrid = document.getElementById('wordGrid');
+words.forEach(w => {
+  const chip = document.createElement('div');
+  chip.className = 'word-chip';
+  chip.innerHTML = `<span class="check"></span><span class="icon2">${w.icon}</span><span class="fr">${w.fr}</span>`;
+  chip.addEventListener('click', () => {
+    chip.classList.toggle('checked');
+    chip.querySelector('.check').textContent = chip.classList.contains('checked') ? '✓' : '';
+  });
+  wordGrid.appendChild(chip);
+});
+
+let lastQ = -1;
+const questionEl = document.getElementById('question');
+document.getElementById('newQuestionBtn').addEventListener('click', () => {
+  let next;
+  do { next = Math.floor(Math.random() * questions.length); } while (next === lastQ && questions.length > 1);
+  lastQ = next;
+  questionEl.classList.remove('spin');
+  void questionEl.offsetWidth; // restart animation
+  questionEl.textContent = questions[next];
+  questionEl.classList.add('spin');
+});
+</script>
+</body>
+</html>
